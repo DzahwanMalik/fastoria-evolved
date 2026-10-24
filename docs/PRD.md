@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Produk | Landing page event + CMS dashboard THE FASTORIA 2027 |
-| Versi | v1.2 |
+| Versi | v1.3 |
 | Tanggal | 25 Oktober 2026 |
 | Status | Approved |
 
@@ -69,8 +69,9 @@ THE FASTORIA 2027 adalah festival lomba pendidikan, seni, dan olahraga dalam ran
 | --- | --- | --- |
 | `/` | Publik | Landing page satu halaman |
 | `/admin/**` | Admin | CMS dashboard (login, ringkasan, pengaturan acara, kategori, cabang lomba, akun) |
+| `*` | Publik | Halaman 404 dengan tautan kembali ke `/` |
 
-Tidak ada halaman publik lain. Seluruh navigasi di landing page memakai anchor (`#tentang`, `#timeline`, `#cabang-lomba`, `#lokasi`), dan detail lomba tampil sebagai modal di halaman yang sama. Semua path `/admin/*` wajib login; path lain diarahkan ke `/`.
+Tidak ada halaman publik lain selain landing page dan halaman 404. Seluruh navigasi di landing page memakai anchor (`#tentang`, `#timeline`, `#cabang-lomba`, `#lokasi`), dan detail lomba tampil sebagai modal di halaman yang sama. Semua path `/admin/*` wajib login; path yang tidak dikenal menampilkan halaman 404 dengan tautan kembali ke `/`.
 
 ## 7. Landing page
 
@@ -141,6 +142,7 @@ Jika hari H sudah lewat, hitung mundur diganti keterangan "Acara telah berlangsu
 - Badge Individu/Tim tampil sesuai data lomba.
 - Hitung mundur berpindah fase dengan benar: menuju pendaftaran, menuju penutupan, lalu menuju hari H.
 - Landing page hanya satu halaman; navigasi memakai anchor dan detail lomba berupa modal.
+- Path yang tidak dikenal menampilkan halaman 404 dengan tautan kembali ke `/`.
 - Landing page rapi di 360 px, 768 px, dan desktop.
 - Admin dapat login, mengubah konten, dan logout dengan aman.
 - Tidak ada data kosong atau tombol rusak yang tampil ke publik.

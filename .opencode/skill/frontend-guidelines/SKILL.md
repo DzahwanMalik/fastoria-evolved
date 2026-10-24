@@ -1,6 +1,6 @@
 ---
 name: frontend-guidelines
-description: Use when writing or reviewing any Fastoria frontend code (React 19, TypeScript, Tailwind v4, Supabase). Enforces @/ path-alias imports, React.JSX.Element component return types, lucide-react icons, and app-level loading/error gating before content renders. Triggers on new components, refactors, imports, icons, spinners, error screens, forms, and frontend code review.
+description: Use when writing or reviewing any Fastoria frontend code (React 19, TypeScript, Tailwind v4, Supabase). Enforces @/ path-alias imports, JSX.Element component return types, lucide-react icons, React Router declarative mode, and app-level loading/error gating before content renders. Triggers on new components, refactors, imports, icons, spinners, error screens, forms, and frontend code review.
 ---
 
 # Frontend Guidelines
@@ -12,7 +12,7 @@ Non-negotiable rules for the Fastoria frontend. Apply them to every new file and
 | Area | Rule |
 | --- | --- |
 | Imports | Internal modules come from `@/...` (alias of `src/`) |
-| Components | Function declaration returning `React.JSX.Element` |
+| Components | Function declaration returning `JSX.Element` |
 | Icons | `lucide-react` only, imported by name |
 | Boot | Loading and error are handled once in `App`, before pages render |
 | Types | No `any`, no `enum`; `import type` for type-only imports |
@@ -34,7 +34,7 @@ Non-negotiable rules for the Fastoria frontend. Apply them to every new file and
 
 ```tsx
 import { useState } from "react";
-import type * as React from "react";
+import type { JSX } from "react";
 
 import { ArrowRight } from "lucide-react";
 
@@ -44,18 +44,18 @@ import type { Competition } from "@/types/competition";
 
 ## 2. Components
 
-- One component per file. Component files use `PascalCase.tsx`; non-component files use `camelCase.ts`.
+- One component per file. Component files use `PascalCase.tsx`; route configuration modules (`router.tsx`) and non-component files use `camelCase.ts`.
 - Use a named function declaration and a named export. Default-export only when a tool requires it.
 - Destructure props in the signature. Declare `type Props` directly above the component.
-- Every component returns `React.JSX.Element` explicitly. Never use `React.FC`, `JSX.Element`, or an inferred return type.
-- Import the React namespace as a type: `import type * as React from "react"`.
-- Type `children` as `React.ReactNode`; type event handlers with React event types.
+- Every component returns `JSX.Element` explicitly. Never use `React.FC` or an inferred return type.
+- React 19 types do not expose a global `JSX` namespace. Import it as a type: `import type { JSX } from "react"`.
+- Type `children` as `ReactNode` and event handlers with the React event type you need, imported as types from `react`.
 - Keep components focused. Extract a child, hook, or helper when a component owns more than one concern.
 - Hooks live in `src/hooks`, start with `use`, and have explicit parameter and return types.
 - No class components.
 
 ```tsx
-import type * as React from "react";
+import type { JSX } from "react";
 
 import { ArrowRight } from "lucide-react";
 
@@ -64,7 +64,7 @@ type Props = {
   onClick: () => void;
 };
 
-export function CtaButton({ label, onClick }: Props): React.JSX.Element {
+export function CtaButton({ label, onClick }: Props): JSX.Element {
   return (
     <button type="button" onClick={onClick} className="inline-flex items-center gap-2">
       {label}
@@ -114,16 +114,16 @@ export type AppBootstrap =
 Target shape once the bootstrap hook and router exist:
 
 ```tsx
-import type * as React from "react";
+import type { JSX } from "react";
 
-import { RouterProvider } from "react-router";
+import { BrowserRouter } from "react-router";
 
 import { AppError } from "@/components/organisms/AppError";
 import { AppLoading } from "@/components/organisms/AppLoading";
 import { useAppBootstrap } from "@/hooks/useAppBootstrap";
-import { router } from "@/router";
+import { AppRoutes } from "@/router";
 
-export function App(): React.JSX.Element {
+export function App(): JSX.Element {
   const bootstrap = useAppBootstrap();
 
   if (bootstrap.status === "loading") return <AppLoading />;
@@ -131,7 +131,11 @@ export function App(): React.JSX.Element {
     return <AppError message={bootstrap.message} onRetry={bootstrap.retry} />;
   }
 
-  return <RouterProvider router={router} />;
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
 ```
 
@@ -180,7 +184,8 @@ export type CompetitionType = (typeof competitionTypes)[number];
 
 ## 9. Routing and accessibility
 
-- `/` is the only public page; `/admin/*` requires a session; unknown paths redirect to `/`.
+- `/` is the landing page and `*` renders the public 404 screen; `/admin/*` requires a session; the 404 screen links back to `/`.
+- Use React Router declarative mode (`BrowserRouter`, `Routes`, `Route`); do not use `createBrowserRouter` or `RouterProvider`.
 - Landing navigation uses anchors (`#tentang`, `#timeline`, `#cabang-lomba`, `#lokasi`). Competition detail is a modal, not a route.
 - Use `Link`/`NavLink` for internal routes, `<a>` for external URLs and anchors.
 - Route guards run only after bootstrap reaches `ready`.
@@ -198,6 +203,7 @@ export type CompetitionType = (typeof competitionTypes)[number];
 | `src/components/organisms` | Feature-level sections |
 | `src/components/templates` | Page layouts and shells |
 | `src/pages` | Route-level screens |
+| `src/router.tsx` | Declarative route tree (`AppRoutes`) |
 | `src/hooks` | Reusable React hooks |
 | `src/lib` | Supabase client, schemas, pure helpers |
 | `src/types` | Shared types |
@@ -217,7 +223,7 @@ npm run lint
 Before finishing, confirm:
 
 - Internal imports use `@/` and types use `import type`.
-- Components declare `React.JSX.Element` and avoid `React.FC`.
+- Components import `JSX` from `react` and declare `JSX.Element`; they avoid `React.FC`.
 - Icons come from `lucide-react` with correct accessibility attributes.
 - The bootstrap gate covers loading and error before any content renders.
 - No `any`, no `enum`, no ad-hoc CSS.
