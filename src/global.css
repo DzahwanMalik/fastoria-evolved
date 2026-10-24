@@ -10,7 +10,7 @@
   --font-outline: "Monoton", "Anybody", ui-sans-serif, system-ui, sans-serif;
 
   /* Brand palette — Russian Violet, White, Arctic Lime, Fiery Rose, Crayola */
-  --color-background: #2d1d44;
+  --color-background: #1A0A36;
   --color-background-deep: #241733;
   --color-surface: rgb(255 255 255 / 0.06);
   --color-surface-raised: rgb(255 255 255 / 0.1);
@@ -21,13 +21,13 @@
   --color-border: rgb(255 255 255 / 0.16);
 
   --color-primary: #cafb12;
-  --color-primary-foreground: #2d1d44;
+  --color-primary-foreground: #1A0A36;
   --color-secondary: #ff4e78;
   --color-secondary-foreground: #ffffff;
   --color-accent: #306ef9;
   --color-accent-foreground: #ffffff;
   --color-success: #cafb12;
-  --color-success-foreground: #2d1d44;
+  --color-success-foreground: #1A0A36;
   --color-danger: #ff4e78;
   --color-danger-foreground: #ffffff;
   --color-ring: #cafb12;
