@@ -16,7 +16,7 @@ Non-negotiable rules for the Fastoria frontend. Apply them to every new file and
 | Icons | `lucide-react` only, imported by name |
 | Boot | Loading and error are handled once in `App`, before pages render |
 | Types | No `any`, no `enum`; `import type` for type-only imports |
-| Styling | Tailwind utilities only; mobile-first from 360 px |
+| Styling | Semantic theme tokens only; Tailwind utilities, mobile-first from 360 px |
 
 ## 1. Imports
 
@@ -155,14 +155,67 @@ export const competitionTypes = ["individu", "tim"] as const;
 export type CompetitionType = (typeof competitionTypes)[number];
 ```
 
-## 6. Styling
+## 6. Styling and theme
 
-- Use Tailwind v4 utilities. Do not add CSS files or CSS-in-JS; `src/global.css` holds only the Tailwind import and `@theme` tokens.
+All color and typography comes from the semantic tokens in `src/global.css`, which holds the Tailwind import, the `@theme` tokens, and one small base layer for page defaults. Do not add component CSS, CSS-in-JS, `tailwind.config.js`, or per-component stylesheets. The app is dark-only; do not add `dark:` variants or light-mode fallbacks.
+
+### 6.1 Colors
+
+The brand palette is exactly five colors: Crayola `#306EF9`, Fiery Rose `#FF4E78`, Arctic Lime `#CAFB12`, Russian Violet `#2D1D44`, and White `#FFFFFF`. Neutrals below are derived only from Russian Violet and White (shade or alpha); never introduce another hue.
+
+Never use raw palette utilities (`bg-slate-950`, `text-lime-300`, `text-white`) or hex arbitrary values for app UI. Use the semantic tokens below.
+
+| Token | Utilities | Value | Use |
+| --- | --- | --- | --- |
+| `background` | `bg-background` | `#2D1D44` | Page base (Russian Violet) |
+| `background-deep` | `bg-background-deep` | `#241733` | Sunken areas, sidebar, footer |
+| `surface` | `bg-surface` | `rgb(255 255 255 / 0.06)` | Cards, panels, inputs |
+| `surface-raised` | `bg-surface-raised` | `rgb(255 255 255 / 0.10)` | Hover, popovers, nested panels |
+| `border` | `border-border` | `rgb(255 255 255 / 0.16)` | Dividers and outlines |
+| `foreground` | `text-foreground` | `#FFFFFF` | Primary copy |
+| `foreground-muted` | `text-foreground-muted` | `rgb(255 255 255 / 0.72)` | Secondary copy, hints |
+| `primary` | `bg-primary` | `#CAFB12` | Main CTA, active nav, accents (Arctic Lime) |
+| `primary-foreground` | `text-primary-foreground` | `#2D1D44` | Text and icons on primary |
+| `secondary` | `bg-secondary` | `#FF4E78` | Secondary CTA, stickers, dates (Fiery Rose) |
+| `secondary-foreground` | `text-secondary-foreground` | `#FFFFFF` | Text and icons on secondary |
+| `accent` | `bg-accent` | `#306EF9` | Links, tabs, info panels (Crayola) |
+| `accent-foreground` | `text-accent-foreground` | `#FFFFFF` | Text and icons on accent |
+| `success` | `text-success` | `#CAFB12` | Success and completed states |
+| `success-foreground` | `text-success-foreground` | `#2D1D44` | Text and icons on success |
+| `danger` | `text-danger` | `#FF4E78` | Errors and destructive actions |
+| `danger-foreground` | `text-danger-foreground` | `#FFFFFF` | Text and icons on danger |
+| `ring` | `ring-ring` | `#CAFB12` | Focus ring |
+| `overlay` | `bg-overlay` | `rgb(36 23 51 / 0.8)` | Modal backdrop |
+
+- Always pair a filled surface with its `-foreground` token: `bg-primary text-primary-foreground`.
+- Build hover and active states with opacity modifiers on the same token (`hover:bg-primary/90`), not with new colors.
+- Body copy uses `foreground` and `foreground-muted`; `primary`, `secondary`, and `accent` are for emphasis, labels, and surfaces.
+- Page roots inherit `bg-background text-foreground` from the base layer. Add a background class only when a section differs from the page.
+- `ring-ring` is the focus color. Never remove outlines without an accessible replacement.
+
+### 6.2 Typography
+
+| Token | Utilities | Family | Use |
+| --- | --- | --- | --- |
+| `sans` | `font-sans` | Calibri → Carlito | Body copy and UI (base default) |
+| `display` | `font-display` | Anybody | Poster headings |
+| `outline` | `font-outline` | Monoton | Decorative lined headings |
+| `mono` | `font-mono` | System monospace | Labels, eyebrows, timers, stickers |
+
+- Fonts are loaded once in `index.html` from Google Fonts. Never add `@import url(...)` for fonts to CSS.
+- Calibri is the body face; Carlito is loaded as its metric-compatible fallback for devices without Calibri. Keep both in `--font-sans`.
+- Do not repeat `font-sans` on every element; the base layer already applies it.
+- Poster headings use `font-display font-black uppercase`, tight leading (`leading-none` or `leading-[0.9]`), and `font-stretch-expanded` from `sm:` upward. Keep them short.
+- `font-outline` is only for decorative section headings. Never use it for body copy, labels, buttons, or text that must be read at small sizes.
+- Labels, eyebrows, timers, and sticker text use `font-mono uppercase` with wide `tracking-*`. The PRD requires monospace labels, so do not replace them with Calibri or Anybody.
+
+### 6.3 Layout and utilities
+
 - Build mobile-first from 360 px, then add `sm:`, `md:`, and `lg:` overrides. Never allow horizontal scrolling.
 - Use `size-*` for square icons and controls, and `gap-*` for spacing between siblings.
 - Never construct class names from fragments. Map state to complete class strings.
 - Use arbitrary values only when the design reference requires an exact value.
-- Keep focus styles visible; do not remove outlines without an accessible replacement.
+- Keep focus styles visible; the base layer provides the ring, so do not remove it.
 
 ## 7. Forms and validation
 

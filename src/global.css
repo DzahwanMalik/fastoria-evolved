@@ -1,1 +1,54 @@
 @import "tailwindcss";
+
+@theme {
+  /*
+   * Typography — Anybody and Monoton are loaded from Google Fonts in index.html.
+   * Calibri is a system font; Carlito is its metric-compatible webfont fallback.
+   */
+  --font-sans: "Calibri", "Carlito", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Anybody", ui-sans-serif, system-ui, sans-serif;
+  --font-outline: "Monoton", "Anybody", ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand palette — Russian Violet, White, Arctic Lime, Fiery Rose, Crayola */
+  --color-background: #2d1d44;
+  --color-background-deep: #241733;
+  --color-surface: rgb(255 255 255 / 0.06);
+  --color-surface-raised: rgb(255 255 255 / 0.1);
+  --color-overlay: rgb(36 23 51 / 0.8);
+
+  --color-foreground: #ffffff;
+  --color-foreground-muted: rgb(255 255 255 / 0.72);
+  --color-border: rgb(255 255 255 / 0.16);
+
+  --color-primary: #cafb12;
+  --color-primary-foreground: #2d1d44;
+  --color-secondary: #ff4e78;
+  --color-secondary-foreground: #ffffff;
+  --color-accent: #306ef9;
+  --color-accent-foreground: #ffffff;
+  --color-success: #cafb12;
+  --color-success-foreground: #2d1d44;
+  --color-danger: #ff4e78;
+  --color-danger-foreground: #ffffff;
+  --color-ring: #cafb12;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scrollbar-color: var(--color-border) var(--color-background-deep);
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
