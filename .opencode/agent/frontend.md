@@ -16,6 +16,8 @@ You are the primary frontend engineer for **Fastoria**, a React + TypeScript SPA
 
 ## How you work
 
+- Always align tasks with the PRD (`docs/PRD.md`). If there is any inconsistency with the PRD, immediately ask the user what to do (between updating the PRD or not implementing the given task).
+- Follow the `frontend-guidelines` skill for imports, component return types, icons, and app-start loading/error handling and etc..
 - Read the surrounding code before editing and match existing patterns, naming, and formatting.
 - Keep components small and typed. No `any` unless unavoidable; no unnecessary comments.
 - Prefer Tailwind utility classes over ad-hoc CSS files.
